@@ -1,0 +1,25 @@
+---
+title: "Hospitals"
+author: "Andre Williams"
+date: '2022-06-13'
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+hospitals <- read.csv("http://www.stat.cmu.edu/cmsac/sure/2022/materials/data/health/eda_projects/hospitals.csv")
+head(hospitals)
+```
+```{r}
+library(ggthemes)
+
+
+#change rating overall to
+hospitals %>%
+  ggplot(aes(x = Facility.Type)) +
+  geom_bar(aes(y = mean(Rating.Overall)), stat = "identity") +
+  scale_fill_colorblind() +
+  theme_bw() 
+
+
+```

@@ -1,0 +1,63 @@
+---
+title: 'EDA Project: Hospital Ratings data'
+output: html_document
+---
+
+## Overview
+
+This project will begin on Monday June 13th, and __conclude with a 10-15 minute presentation on Friday, June 24th (either during the morning session from 10:30 to 12 PM or in the afternoon from 1:30 to 3 PM)__. The goal of this project is to practice understanding the structure of a dataset, and to practice generating and evaluating hypotheses using fundamental EDA and data visualization techniques.
+
+## Deliverables
+
+Your team is expected to produce `R Markdown` slides (an example template will be provided shortly) to accompany your 10-15 minute presentation with the following information:
+
+* Explanation of the data structure of the dataset,
+
+* __Three hypotheses__ you are interested in exploring,
+
+* __Three data visualizations__ exploring the hypotheses, at least two of which must be multivariate.  __Each visualization must be in a different format__ from the other two, and you must have at least one categorical and one continuous visualization.
+
+* __One clustering example__,
+
+* Conclusions reached for the hypotheses based on your EDA and data visualizations.
+
+## Timeline
+
+There will be two submission deadlines:
+
+**Friday, June 17th @ 5:00 PM EST** - Each student will push their individual code for the project thus far to their GitHub accounts for review. We will then provide feedback on the code submitted.
+
+**Thursday, June 23rd @ 11:59 PM EST** - Slides and full code must be completed and ready for presentation. Send your slides to Prof Yurko's email ([ryurko@andrew.cmu.edu](mailto:ryurko@andrew.cmu.edu)).  All code, visualizations, and presentations must be made in `R`. Take advantage of examples from lecture and the presentation template, but also feel free to explore material online that may be relevant!
+
+
+## Data
+
+Your team is assigned the [__Hospital ratings data__](http://www.stat.cmu.edu/cmsac/sure/2022/materials/data/health/eda_projects/hospitals.csv). This dataset was curated by the [CORGIS Dataset Project](https://corgis-edu.github.io/corgis/csv/hospitals/) to: _"allow consumers to directly compare across hospitals performance measure information related to heart attack, emergency department care, preventive care, stroke care, and other conditions. The data is part of an Administration-wide effort to increase the availability and accessibility of information on quality, utilization, and costs for effective, informed decision-making."_ Original source of data located [here](https://data.medicare.gov/data/hospital-compare).
+
+Each row of the dataset corresponds to a single hospital and has the following columns (with definitions borrowed the [online glossary](https://corgis-edu.github.io/corgis/csv/hospitals/):
+
+* `Facility.Name`: Name of the hospital
+* `Facility.City`: City in which the hospital is located
+* `Facility.State`: Two letter capitalized abbreviation of the State in which the hospital is located (e.g., AZ is Arizona)
+* `Facility.Type`: Kind of organization operating the hospital: one of Government, Private, Proprietary, Church, or Unknown
+* `Rating.Overall`: Overall rating between 1 and 5 stars, with 5 stars being the highest rating; -1 represents no rating.	
+* `Rating.Mortality`: Above, Same, Below, or Unknown comparison to national hospital mortality
+* `Rating.Safety`: Above, Same, Below, or Unknown comparison to national hospital safety
+* `Rating.Readmission`: Above, Same, Below, or Unknown comparison to national hospital readmission
+* `Rating.Experience`: Above, Same, Below, or Unknown comparison to national hospital patience experience
+* `Rating.Effectiveness`: Above, Same, Below, or Unknown comparison to national hospital effectiveness of care
+* `Rating.Timeliness`: Above, Same, Below, or Unknown comparison to national hospital timeliness of care
+* `Rating.Imaging`:	Above, Same, Below, or Unknown comparison to national hospital effective use of imaging
+* `Procedure.Heart Attack.Cost`: Average cost of care for heart attacks
+* `Procedure.Heart Attack.Quality`: Lower, Average, Worse, or Unknown comparison to national quality of care for heart attacks
+* `Procedure.Heart Attack.Value`: Lower, Average, Worse, or Unknown comparison to national cost of care for heart attacks
+* `Procedure.Heart Failure.Cost`: Average cost of care for heart failure
+* `Procedure.Heart Failure.Quality`: Lower, Average, Worse, or Unknown comparison to national quality of care for heart failures
+* `Procedure.Heart Failure.Value`: Lower, Average, Worse, or Unknown comparison to national cost of care for heart failures
+* `Procedure.Pneumonia.Cost`: Average cost of care for pneumonia
+* `Procedure.Pneumonia.Quality`: Lower, Average, Worse, or Unknown comparison to national quality of care for pneumonia
+* `Procedure.Pneumonia.Value`: Lower, Average, Worse, or Unknown comparison to national cost of care for pneumonia
+* `Procedure.Hip Knee.Cost`: Average cost of care for hip or knee conditions
+* `Procedure.Hip Knee.Quality`: Lower, Average, Worse, or Unknown comparison to national quality of care for hip or knee conditions
+* `Procedure.Hip Knee.Value`: Lower, Average, Worse, or Unknown comparison to national cost of care for hip or knee conditions
+
