@@ -10,16 +10,78 @@ library(tidyverse)
 hospitals <- read.csv("http://www.stat.cmu.edu/cmsac/sure/2022/materials/data/health/eda_projects/hospitals.csv")
 head(hospitals)
 ```
+
+
 ```{r}
-library(ggthemes)
-
-
-#change rating overall to
 hospitals %>%
-  ggplot(aes(x = Facility.Type)) +
-  geom_bar(aes(y = mean(Rating.Overall)), stat = "identity") +
-  scale_fill_colorblind() +
-  theme_bw() 
+  select(Facility.Type, Rating.Overall)
+```
 
+
+```{r}
+hospital_ratings <- hospitals %>%
+  group_by(Facility.Type) %>%
+  summarize(Overall.Ratings = mean(Rating.Overall))
+
+hospital_ratings
+
+```
+
+```{r}
+hospital_ratings %>%
+  ggplot(aes(x = Facility.Type, y = Overall.Ratings, fill = Facility.Type)) +
+  geom_col(width = 0.5) +
+  theme_bw()
+
+
+```
+
+
+
+```{r}
+install.packages("usmap")
+```
+
+```{r}
+hospital_cost <- hospitals %>%
+  select(Facility.State, Procedure.Heart.Attack.Cost) %>%
+  group_by(Facility.State) %>%
+  summarize(avg_cost = mean(Procedure.Heart.Attack.Cost)) %>%
+  arrange(desc(avg_cost))
+  
+  
+hospital_cost
+
+```
+```{r}
+calculate_mode <- function(x) {
+  uniqx <- unique(x)
+  uniqx[which.max(tabulate(match(x, uniqx)))]
+}
+
+```
+
+```{r}
+library(dplyr)
+
+hospitals %>% 
+  group_by(Facility.State) %>% 
+  summarise(color = calculate_mode(Procedure.Heart.Attack.Quality))
+
+```
+
+
+
+
+
+```{r}
+hospital_quality <- hospitals %>%
+  select(Facility.State, Procedure.Heart.Attack.Quality) %>%
+  group_by(Facility.State) %>%
+  summarize(avg_quality = mode(Procedure.Heart.Attack.Quality)) %>%
+  arrange(desc(avg_quality))
+  
+  
+hospital_quality
 
 ```
