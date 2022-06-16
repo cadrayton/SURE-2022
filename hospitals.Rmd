@@ -85,3 +85,23 @@ hospital_quality <- hospitals %>%
 hospital_quality
 
 ```
+
+```{r}
+hospitals %>%
+  select(Procedure.Heart.Attack.Cost, Procedure.Heart.Attack.Quality)
+
+```
+
+```{r}
+library(plyr)
+hospitals$Procedure.Heart.Attack.Quality <- revalue(hospitals$Procedure.Heart.Attack.Quality,
+               c("Better" = 1, "Lower" = 2, "Average" = 3, "Worse"= 4, "Unknown"= -1))
+
+```
+
+
+
+```{r}
+hospitals %>%
+  select(Procedure.Heart.Attack.Cost, Procedure.Heart.Attack.Quality)
+```
