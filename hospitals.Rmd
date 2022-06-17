@@ -113,7 +113,6 @@ With the exception of Florida, our hypotheses was correct, as New Jersey and the
 
 
 
-
 ```{r}
 library(plyr)
 hospitals$Procedure.Heart.Attack.Quality <- revalue(hospitals$Procedure.Heart.Attack.Quality, c("Better" = 1, "Unknown" = -1, "Lower" = 2, "Worse" = 4, "Average" = 3))
