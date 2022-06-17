@@ -5,6 +5,9 @@ date: '2022-06-13'
 output: html_document
 ---
 
+
+Reading the Data set in.
+
 ```{r}
 library(tidyverse)
 hospitals <- read.csv("http://www.stat.cmu.edu/cmsac/sure/2022/materials/data/health/eda_projects/hospitals.csv")
@@ -12,11 +15,11 @@ head(hospitals)
 ```
 
 
-```{r}
-hospitals %>%
-  select(Facility.Type, Rating.Overall)
-```
+Hypotheses #1: Government will have the worse overall rating.
 
+1) Grouping the data set by the facility type.
+2) Averaging the ratings of each facility type.
+3) Displaying the new table with the facility type and average overall rating.
 
 ```{r}
 hospital_ratings <- hospitals %>%
@@ -27,6 +30,8 @@ hospital_ratings
 
 ```
 
+4) Plotting the average hospital ratings by facility.
+
 ```{r}
 hospital_ratings %>%
   ggplot(aes(x = Facility.Type, y = Overall.Ratings, fill = Facility.Type)) +
@@ -36,11 +41,70 @@ hospital_ratings %>%
 
 ```
 
+Our first hypotheses was deemed correct, as government hospitals had an overall rating of ~1.5 stars.
 
+
+
+
+
+
+
+
+Hypotheses #2: States with a high timeliness rating would have a higher effectiveness rating than most places.
+
+1)Install the 'usmap' package
 
 ```{r}
 install.packages("usmap")
 ```
+
+```{r}
+hospital_cost <- hospitals %>%
+  group_by(Facility.State)
+```
+
+
+```{r}
+hospital_cost <- hospital_cost %>%
+  summarise(Avg_Cost = mean(Procedure.Heart.Attack.Cost))
+
+colnames(hospital_cost)[1] <- 'state'
+```
+
+```{r}
+hospital_cost
+```
+
+```{r}
+library(usmap)
+library(ggplot2)
+
+
+
+plot_usmap(data = hospital_cost, values = "Avg_Cost", color = "red") + 
+  scale_fill_continuous(low = "yellow", high = "darkred", name = "Avg Cost", label = scales::comma) + 
+  theme(legend.position = "right")
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r}
 hospital_cost <- hospitals %>%
@@ -53,49 +117,13 @@ hospital_cost <- hospitals %>%
 hospital_cost
 
 ```
-```{r}
-calculate_mode <- function(x) {
-  uniqx <- unique(x)
-  uniqx[which.max(tabulate(match(x, uniqx)))]
-}
 
-```
-
-```{r}
-library(dplyr)
-
-hospitals %>% 
-  group_by(Facility.State) %>% 
-  summarise(color = calculate_mode(Procedure.Heart.Attack.Quality))
-
-```
-
-
-
-
-
-```{r}
-hospital_quality <- hospitals %>%
-  select(Facility.State, Procedure.Heart.Attack.Quality) %>%
-  group_by(Facility.State) %>%
-  summarize(avg_quality = mode(Procedure.Heart.Attack.Quality)) %>%
-  arrange(desc(avg_quality))
-  
-  
-hospital_quality
-
-```
-
-```{r}
-hospitals %>%
-  select(Procedure.Heart.Attack.Cost, Procedure.Heart.Attack.Quality)
-
-```
 
 ```{r}
 library(plyr)
-hospitals$Procedure.Heart.Attack.Quality <- revalue(hospitals$Procedure.Heart.Attack.Quality,
-               c("Better" = 1, "Lower" = 2, "Average" = 3, "Worse"= 4, "Unknown"= -1))
+hospitals$Procedure.Heart.Attack.Quality <- revalue(hospitals$Procedure.Heart.Attack.Quality, c("Better" = 1, "Unknown" = -1, "Lower" = 2, "Worse" = 4, "Average" = 3))
+hospitals <- hospitals %>%
+  mutate_at(vars(Procedure.Heart.Attack.Quality), as.numeric)
 
 ```
 
@@ -103,5 +131,20 @@ hospitals$Procedure.Heart.Attack.Quality <- revalue(hospitals$Procedure.Heart.At
 
 ```{r}
 hospitals %>%
-  select(Procedure.Heart.Attack.Cost, Procedure.Heart.Attack.Quality)
+  select(Facility.State, Procedure.Heart.Attack.Quality)
+```
+
+```{r}
+hospitals %>%
+  mutate(hospital_cpq = Procedure.Heart.Attack.Cost / Procedure.Heart.Attack.Quality)
+
+```
+
+```{r}
+hospital_costperquality <- hospitals %>%
+  select(Facility.Stat  group_by(Facility.State) %>%
+  summarize(cpq = mean(hospital_cpq))
+
+hospital_costperquality
+
 ```
