@@ -5,7 +5,7 @@ date: '2022-06-13'
 output: html_document
 ---
 
-
+#The  hospitals data set.
 Reading the Data set in.
 
 ```{r}
@@ -15,7 +15,7 @@ head(hospitals)
 ```
 
 
-Hypotheses #1: Government will have the worse overall rating.
+#Hypotheses 1: Government hospitals have the worse overall rating compared to other institutions.
 
 1) Grouping the data set by the facility type.
 2) Averaging the ratings of each facility type.
@@ -41,16 +41,13 @@ hospital_ratings %>%
 
 ```
 
+
 Our first hypotheses was deemed correct, as government hospitals had an overall rating of ~1.5 stars.
 
 
 
 
-
-
-
-
-Hypotheses #2: States with a high timeliness rating would have a higher effectiveness rating than most places.
+#Hypotheses #2: States in the Northeast tend to have a high cost of procedures.
 
 1)Install the 'usmap' package
 
@@ -58,30 +55,43 @@ Hypotheses #2: States with a high timeliness rating would have a higher effectiv
 install.packages("usmap")
 ```
 
+2) Group the hospitals by their states.
+
 ```{r}
 hospital_cost <- hospitals %>%
   group_by(Facility.State)
 ```
 
+3) Calculate the average cost of each procedures per state.
 
 ```{r}
 hospital_cost <- hospital_cost %>%
-  summarise(Avg_Cost = mean(Procedure.Heart.Attack.Cost))
+  summarise(Avg_HCost = mean(Procedure.Heart.Attack.Cost),
+            Avg_HFCost = mean(Procedure.Heart.Failure.Cost),
+            Avg_PCost = mean(Procedure.Pneumonia.Cost),
+            Avg_HKCost = mean(Procedure.Hip.Knee.Cost))
 
 colnames(hospital_cost)[1] <- 'state'
 ```
 
+4) Combine the average of each procedure to obtain one average cost of all.
+
 ```{r}
-hospital_cost
+hospital_avg_cost <- hospital_cost %>%
+  group_by(state) %>%
+  summarize(Avg_cost = mean(Avg_HCost + Avg_HFCost + Avg_PCost + Avg_HKCost)) %>%
+  arrange(desc(Avg_cost))
+  
+hospital_avg_cost
 ```
+
+5) Plot the map with the average cost of procedures for each state.
 
 ```{r}
 library(usmap)
 library(ggplot2)
 
-
-
-plot_usmap(data = hospital_cost, values = "Avg_Cost", color = "red") + 
+plot_usmap(data = hospital_avg_cost, values = "Avg_cost", color = "red") + 
   scale_fill_continuous(low = "yellow", high = "darkred", name = "Avg Cost", label = scales::comma) + 
   theme(legend.position = "right")
 
@@ -92,31 +102,16 @@ plot_usmap(data = hospital_cost, values = "Avg_Cost", color = "red") +
 
 
 
+With the exception of Florida, our hypotheses was correct, as New Jersey and the rest of northeast America have a higher cost of living. 
 
 
 
 
+#Hypotheses 3: (Still working on) Something along the lines of comparing the average cost of preocedures to the quality in each state. This will be the cluster example. Cameron has the more complete code in his Rstudio. I just have some of the calculations below.
 
 
 
 
-
-
-
-
-
-
-```{r}
-hospital_cost <- hospitals %>%
-  select(Facility.State, Procedure.Heart.Attack.Cost) %>%
-  group_by(Facility.State) %>%
-  summarize(avg_cost = mean(Procedure.Heart.Attack.Cost)) %>%
-  arrange(desc(avg_cost))
-  
-  
-hospital_cost
-
-```
 
 
 ```{r}
@@ -127,24 +122,16 @@ hospitals <- hospitals %>%
 
 ```
 
-
-
 ```{r}
 hospitals %>%
   select(Facility.State, Procedure.Heart.Attack.Quality)
 ```
 
 ```{r}
-hospitals %>%
-  mutate(hospital_cpq = Procedure.Heart.Attack.Cost / Procedure.Heart.Attack.Quality)
+hospitals_costperquality <- hospitals %>%
+  mutate(hospital_cpq = Procedure.Heart.Attack.Cost / Procedure.Heart.Attack.Quality) %>%
+  select(Facility.State, hospital_cpq)
 
-```
-
-```{r}
-hospital_costperquality <- hospitals %>%
-  select(Facility.Stat  group_by(Facility.State) %>%
-  summarize(cpq = mean(hospital_cpq))
-
-hospital_costperquality
+hospitals_costperquality
 
 ```
