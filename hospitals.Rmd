@@ -5,7 +5,7 @@ date: '2022-06-13'
 output: html_document
 ---
 
-#The  hospitals data set.
+# The  hospitals data set.
 Reading the Data set in.
 
 ```{r}
@@ -15,7 +15,7 @@ head(hospitals)
 ```
 
 
-#Hypotheses 1: Government hospitals have the worse overall rating compared to other institutions.
+# Hypotheses 1: Government hospitals have the worse overall rating compared to other institutions.
 
 1) Grouping the data set by the facility type.
 2) Averaging the ratings of each facility type.
@@ -47,12 +47,33 @@ Our first hypotheses was deemed correct, as government hospitals had an overall 
 
 
 
-#Hypotheses #2: States in the Northeast tend to have a high cost of procedures.
+# Hypotheses #2: States in the Northeast tend to have a high cost of procedures.
 
-1)Install the 'usmap' package
+1)Check the population for each state
 
 ```{r}
-install.packages("usmap")
+census <- read.csv("https://www2.census.gov/programs-surveys/popest/datasets/2010-2019/state/detail/SCPRC-EST2019-18+POP-RES.csv")
+head(census)
+```
+
+```{r}
+population0 <- as_tibble(census) %>%
+  select(NAME, POPESTIMATE2019)
+
+colnames(population0)[1] <- 'state'
+colnames(population0)[2] <- 'population'
+
+population0 <- population0[-c(1, 53),]
+```
+
+```{r}
+library(usmap)
+library(ggplot2)
+
+plot_usmap(data = population0, values = "population", color = "red") + 
+  scale_fill_continuous(low = "yellow", high = "darkred", name = "population", label = scales::comma) + 
+  theme(legend.position = "right")
+
 ```
 
 2) Group the hospitals by their states.
@@ -107,7 +128,7 @@ With the exception of Florida, our hypotheses was correct, as New Jersey and the
 
 
 
-#Hypotheses 3: (Still working on) Something along the lines of comparing the average cost of preocedures to the quality in each state. This will be the cluster example. Cameron has the more complete code in his Rstudio. I just have some of the calculations below.
+# Hypotheses 3: (Still working on) Something along the lines of comparing the average cost of preocedures to the quality in each state. This will be the cluster example. Cameron has the more complete code in his Rstudio. I just have some of the calculations below.
 
 
 
