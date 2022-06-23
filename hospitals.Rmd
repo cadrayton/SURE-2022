@@ -128,12 +128,112 @@ With the exception of Florida, our hypotheses was correct, as New Jersey and the
 
 
 
-# Hypotheses 3: (Still working on) Something along the lines of comparing the average cost of preocedures to the quality in each state. This will be the cluster example. Cameron has the more complete code in his Rstudio. I just have some of the calculations below.
+# Hypotheses 3: The average overall cost of all four procedures will be lowest in Church Facility Type hospitals. Cameron has the more complete code in his Rstudio. I just have some of the calculations below.
+
+#Making the variable 'all_cost' in my 'ratings' dataset  
+
+#ratings_nozero has all of the aprx. 2,500 zero values filtered out
+#ratings has a new column for all_cost0 that keeps the zeroes in while also taking the average cost across all four procedures per hospital in the 'ratings' dataset
+
+ratings_nozero <- hospitals %>%
+  filter(`Procedure.Heart Attack.Cost` > 0, `Procedure.Heart Failure.Cost` > 0, Procedure.Pneumonia.Cost > 0, `Procedure.Hip Knee.Cost` > 0) %>%
+  mutate(all_cost = (`Procedure.Heart Attack.Cost` + `Procedure.Heart Failure.Cost` + `Procedure.Pneumonia.Cost` + `Procedure.Hip Knee.Cost`) / 4)
+
+ratings <- hospitals %>%
+  mutate(all_cost0 = (`Procedure.Heart Attack.Cost` + `Procedure.Heart Failure.Cost` + `Procedure.Pneumonia.Cost` + `Procedure.Hip Knee.Cost`) / 4)
+
+#Violin-Boxplot
+
+#Violin-Boxplot of the mean of all procedure costs (including Zeroes) in our hospital dataset
+hospitals %>%
+  ggplot(aes(x = Facility.Type,
+             y = all_cost0)) +
+  geom_violin() +
+  geom_boxplot(width = .2) +
+  theme_bw()
+
+#Violin-Boxplot of the mean of all procedure costs but with Zeroes filtered out
+ratings_nozero %>%
+  ggplot(aes(x = Facility.Type,
+             y = all_cost)) +
+  geom_violin(aes(fill = factor(Facility.Type))) +
+  geom_boxplot(width = .2) +
+  theme_bw()
 
 
+#A Stacked Bar Plot showing the distribution of frequency of the 4 procedures (Supporting plot to the 2 Violin-Boxplots)
+ratings_sub = hospitals[c(4,13,16,19,22)]
+procedure_names = c("Empty","Heart Attack", "Heart Failure", "Pneumonia", "Hip Knee")
+type = c()
+procedure = c()
+n = dim(hospitals)[1]
+for (i in 1:n){
+  for (j in 2:5){
+    if (as.numeric(ratings_sub[i,j])>0){
+      type = c(type, as.character(ratings_sub[i,1]))
+      procedure = c(procedure, procedure_names[j])
+    }
+  }
+}
+type_procedure = data.frame("Type" = type, "Procedure" = procedure)
+type_procedure %>% ggplot(aes(x = Type, fill = Procedure)) +
+  geom_bar() +
+  labs(title = " ",
+       x = "Type", y = "Procedure")
 
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# Clustering Example: K-Means Clsutering
+
+clean_ratings <- hospitals %>%
+  filter(`Procedure.Heart Attack.Cost` > 0, `Procedure.Heart Failure.Cost` > 0)
+clean_ratings
+
+#Standardize the variables
+
+clean_ratings <- clean_ratings %>%
+  mutate(std_log_cost = as.numeric(scale(`Procedure.Heart Attack.Cost`, center = TRUE, scale = TRUE)),
+         std_rating_over = as.numeric(scale(`Procedure.Heart Failure.Cost`, center = TRUE, scale = TRUE)))
+
+#K-means Algorithm with 2 centroids (We can compare with the 3 centers clustering algorithm)
+std_kmeans <- 
+  kmeans(dplyr::select(clean_ratings, std_log_cost, std_rating_over),
+         algorithm = "Lloyd", centers = 2, nstart = 1)
+         
+#We can show a side-by-side clustering plot with 3 centroids
+
+std_kmeans2 <- 
+  kmeans(dplyr::select(clean_ratings, std_log_cost, std_rating_over),
+         algorithm = "Lloyd", centers = 3, nstart = 1)
+
+#Clustering Alogrithm for Heart Attack Cost and Heart Failure Cost
+
+clean_ratings %>%
+  mutate(rating_clusters = 
+           as.factor(std_kmeans$cluster)) %>%
+  ggplot(aes(x = `Procedure.Heart Attack.Cost`, y = `Procedure.Heart Failure.Cost`,
+             color = rating_clusters)) +
+  geom_point() + 
+  ggthemes::scale_color_colorblind() +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  coord_fixed()
+  
+#Second clustering example
+
+clean_ratings %>%
+  mutate(rating_clusters = 
+           as.factor(std_kmeans2$cluster)) %>%
+  ggplot(aes(x = `Procedure.Heart Attack.Cost`, y = `Procedure.Heart Failure.Cost`,
+             color = rating_clusters)) +
+  geom_point() + 
+  ggthemes::scale_color_colorblind() +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  coord_fixed()
+  
+  
 ```{r}
 library(plyr)
 hospitals$Procedure.Heart.Attack.Quality <- revalue(hospitals$Procedure.Heart.Attack.Quality, c("Better" = 1, "Unknown" = -1, "Lower" = 2, "Worse" = 4, "Average" = 3))
